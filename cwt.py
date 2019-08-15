@@ -277,7 +277,7 @@ def empty(a):
         return a
 
 
-# In[ ]:
+# In[62]:
 
 
 import tkinter as tk
@@ -288,7 +288,11 @@ global c
 
 window = Tk()
 window.title("Custom Wall Tool") 
-window.iconbitmap('tama.ico')
+try:
+    window.iconbitmap('tama.ico')
+except:
+    pass
+    
 btnjson = Button(window, text="Read Json",command=jsonparser)
 btnshift = Button(window, text="Shift", command=shiftw, width=8)
 btnmirror = Button(window, text="Mirror", command=mirrorw, width=8)
