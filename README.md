@@ -7,13 +7,15 @@ All results will be displayed on the right textfield (Output).
 The values below "Data" show the first/selected wall read from the json. 
 Otherwise they can be used to create a new wall with "Add New Wall".
 New walls will be stacked up on old walls.
+"Delete Wall" will delete the currently selected (displayed in "Data") wall.
 
 "Forth" and "Back" lets you navigate through all current walls. The selected wall shows its data in the fields below "Data".
 When a slected wall shall be changed, the value can simply be changed. Afterwards press "Conform Changes".
 
 "Shift/Steps" lets you manipulate existing walls. All values below indicate changes that will be made. "Shift" moves all walls by these values.
-"Increase step-by-step" takes the first wall (currently displayed in "Output") and changes it as often as "Steps" indicates by these values.
+"Increase step-by-step" takes all walls (currently displayed in "Output") and changes them as often as "Steps" indicates by these values.
 "Mirror" moves all walls to the other side in the map (like MM mirror).
+"+Mirror" and "+Shift" does the same as above, but instead of replacing old walls, it adds them on top of it. So you have old and shifted/mirrored walls.
 
 "Clear All" deletes all current walls.
 
@@ -23,9 +25,9 @@ Fill Data and press "Add New Wall" to create the new wall. Press "Add New Wall" 
 Press "Back" twice, change the Height and press "Confirm Changes" to alter the third wall (displayed now in Output).
 
 Enter a value for "Time" and press "Shift" to change all 5 walls by this value.
-Enter a value for "Steps" and a value for "LineIndex". The first wall will be used as basis. There will be as much walls as "Steps" displays plus the first wall.
-The following walls will be altered by the value of "LineIndex" everytime.
-(e.g. Steps=2, LineIndex=2000(Shift/Steps), wall1=2000(start), wall2=4000, wall3=6000)
+Press "Shift+" and you have the once shifted 5 walls and additional 5 walls which were shifted twice.
+Enter a value for "Steps" and a value for "LineIndex". All walls (except the original 10) will be increased by LineIndex as much as "Steps"-times.
+So with "Steps"=2 there will be 30 walls now. 10 Original, 10 increased once, 10 increased twice.
 
 Number Logic:
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[236]:
+# In[47]:
 
 
 def pm(a): #plusminus
@@ -32,22 +32,15 @@ class Wall:
         
 
 
-# In[352]:
+# In[ ]:
 
 
-def sbsi(owall, ts, lis, hs, shs, ds, ws, times): #step-by-step-increase, owall is original wall/starting wall, s are shifts, times are how often
-    newwalls=[]
-    newwalls.append(owall)
-    for x in range (times):
-        newwall= Wall(owall.t+ts, owall.li+lis, owall.h+hs, owall.sh+shs, owall.d+ds, owall.w+ws)
-        newwalls.append(newwall)
-        owall=newwall
-    return newwalls
+
         
         
 
 
-# In[353]:
+# In[48]:
 
 
 def shift(walls, ts, lis, hs, shs, ds, ws): #shift object
@@ -65,16 +58,18 @@ def shift(walls, ts, lis, hs, shs, ds, ws): #shift object
     return newwalls
 
 
-# In[354]:
+# In[49]:
 
 
 def mirror(walls): # left right swap object
+        newwalls=[]
         for x in walls:
-            x.li=(-x.li)+4-x.w
-        return walls  
+            newwall=Wall(x.t,(-x.li)+4-x.w,x.h,x.sh,x.d,x.w)
+            newwalls.append(newwall)
+        return newwalls  
 
 
-# In[355]:
+# In[50]:
 
 
 import json
@@ -108,7 +103,7 @@ def jsonparser():
     
 
 
-# In[356]:
+# In[51]:
 
 
 def nextw():
@@ -124,7 +119,7 @@ def backw():
     delvars()
 
 
-# In[372]:
+# In[52]:
 
 
 def editw():
@@ -151,14 +146,24 @@ def addw():
     delvars()
     printw()
     
+def delw():
+    global c
+    if (len(walls)>0):
+        walls.pop(c)
+        if (c==0):
+            c=c+1
+        else:
+            c=c-1
+        delvars()
+        printw()
 
 
-# In[373]:
+# In[53]:
 
 
 def mirrorw():
     global walls
-    mirror(walls)
+    walls=mirror(walls)
     printw()
     
 def shiftw():
@@ -172,7 +177,13 @@ def shiftw():
     walls=shift(walls, ts, lis, hs, shs, ds, ws)
     printw()
     
-def sbsiw():
+def mirrorwp():
+    global walls
+    for x in mirror(walls):
+        walls.append(x)
+    printw()
+    
+def shiftwp():
     global walls
     ts=float(empty(v11.get()))
     lis=float(empty(v22.get()))
@@ -180,13 +191,41 @@ def sbsiw():
     shs=float(empty(v44.get()))
     ds=float(empty(v55.get()))
     ws=float(empty(v66.get()))
+    for x in shift(walls, ts, lis, hs, shs, ds, ws):
+        walls.append(x)
+    printw()
+
+def sbsi(owall, ts, lis, hs, shs, ds, ws, times): #step-by-step-increase, owall is original wall/starting wall, s are shifts, times are how often
+    newwalls=[]
+    for x in range (times):
+        newwall= Wall(owall.t+ts, owall.li+lis, owall.h+hs, owall.sh+shs, owall.d+ds, owall.w+ws)
+        newwalls.append(newwall)
+        owall=newwall
+    return newwalls
+
+def sbsiw():
+    global walls
+    owalls=walls
+    ts=float(empty(v11.get()))
+    lis=float(empty(v22.get()))
+    hs=float(empty(v33.get()))
+    shs=float(empty(v44.get()))
+    ds=float(empty(v55.get()))
+    ws=float(empty(v66.get()))
     times=int(empty(v77.get()))
-    walls=sbsi(walls[0], ts, lis, hs, shs, ds, ws, times)
+    a=len(walls)
+    for x in range (times):
+        newwalls=[]
+        for y in range (a):
+            newwall= Wall(owalls[y].t+ts, owalls[y].li+lis, owalls[y].h+hs, owalls[y].sh+shs, owalls[y].d+ds, owalls[y].w+ws)
+            walls.append(newwall)
+            newwalls.append(newwall)
+        owalls=newwalls
     printw()
     
 
 
-# In[374]:
+# In[54]:
 
 
 def clear():
@@ -223,12 +262,13 @@ def delvars():
     v4.delete(0,END)
     v5.delete(0,END)
     v6.delete(0,END)
-    v1.insert(INSERT,walls[c].t)
-    v2.insert(INSERT,walls[c].li)
-    v3.insert(INSERT,walls[c].h)
-    v4.insert(INSERT,walls[c].sh)
-    v5.insert(INSERT,walls[c].d)
-    v6.insert(INSERT,walls[c].w)
+    if (len(walls)>0):
+        v1.insert(INSERT,walls[c].t)
+        v2.insert(INSERT,walls[c].li)
+        v3.insert(INSERT,walls[c].h)
+        v4.insert(INSERT,walls[c].sh)
+        v5.insert(INSERT,walls[c].d)
+        v6.insert(INSERT,walls[c].w)
     
 def empty(a):
     if(len(a)==0):
@@ -237,7 +277,7 @@ def empty(a):
         return a
 
 
-# In[409]:
+# In[ ]:
 
 
 import tkinter as tk
@@ -252,22 +292,28 @@ window.iconbitmap('tama.ico')
 btnjson = Button(window, text="Read Json",command=jsonparser)
 btnshift = Button(window, text="Shift", command=shiftw, width=8)
 btnmirror = Button(window, text="Mirror", command=mirrorw, width=8)
+btnshiftp = Button(window, text="+Shift", command=shiftwp, width=8)
+btnmirrorp = Button(window, text="+Mirror", command=mirrorwp, width=8)
 btninc = Button(window, text="Increase step-by-step", command=sbsiw, width=18)
 btnadd = Button(window, text="Add New Wall",command=addw, width=14)
+btndel = Button(window, text="Delete Wall",command=delw, width=14)
 btnclear = Button(window, text="Clear All",command=clear)
 btnjson.grid(column=2, row=0,columnspan=2)
 btnshift.grid(column=5, row=11)
 btnmirror.grid(column=6, row=11)
+btnshiftp.grid(column=5, row=12)
+btnmirrorp.grid(column=6, row=12)
 btninc.grid(column=5, row=10, columnspan=2)
 btnadd.grid(column=2, row=9, columnspan=2)
+btndel.grid(column=2, row=10, columnspan=2)
 btnclear.grid(column=5, row=0,columnspan=2)
 
 btnnext=Button(window, text="Forth", command=nextw, width=6)
 btnlast=Button(window, text="Back", command= backw, width=6)
 btnedit=Button(window, text="Confirm Changes", command=editw, width=14)
-btnnext.grid(column=2, row=11)
-btnlast.grid(column=3,row=11)
-btnedit.grid(column=2,row=10, columnspan=2)
+btnnext.grid(column=2, row=12)
+btnlast.grid(column=3,row=12)
+btnedit.grid(column=2,row=11, columnspan=2)
 
 #scroll1=tk.Scrollbar(window, command=inp.yview)
 #scroll2=tk.Scrollbar(window, command=out.yview)
