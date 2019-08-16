@@ -1,8 +1,11 @@
+Since im too unskilled its likely that the .exe doesnt work or only works when opened with cmd (when its not considered a virus lel). I recommend using jupyter or an other python editor.
+
 This tool lets you create and manipulate custom walls for Beat Saber.
 
 On the left textfield (Input) you can enter a json fragment containing existing walls, which can then be manipulated.
 After inserting json data press "Read Json".
 All results will be displayed on the right textfield (Output).
+"+"-Buttons always add the new walls on tp of the old ones, instead of replacing the old ones.
 
 The values below "Data" show the first/selected wall read from the json. 
 Otherwise they can be used to create a new wall with "Add New Wall".
@@ -18,6 +21,8 @@ When a slected wall shall be changed, the value can simply be changed. Afterward
 "+Mirror" and "+Shift" does the same as above, but instead of replacing old walls, it adds them on top of it. So you have old and shifted/mirrored walls.
 
 "Clear All" deletes all current walls.
+
+The Presets section lets you save and load presets. It saves the currently displayed Output and overwrites itself when saved with the same name. The Presets are stored inside a local Presetsfolder and will be loaded when you start the tool.
 
 Examples:
 
