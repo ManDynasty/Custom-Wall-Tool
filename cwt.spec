@@ -3,7 +3,7 @@
 block_cipher = None
 
 
-a = Analysis(['cwt.py'],
+a = Analysis(['C:/Users/Marcel/OneDrive/Git/cwt.py'],
              pathex=['C:\\Users\\Marcel\\OneDrive\\Git'],
              binaries=[],
              datas=[],
@@ -26,7 +26,7 @@ exe = EXE(pyz,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          console=True )
+          console=True , icon='C:\\Users\\Marcel\\OneDrive\\Git\\tama.ico')
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,

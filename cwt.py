@@ -1,8 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[47]:
-
 
 def pm(a): #plusminus
     if (a<0):
@@ -31,18 +26,6 @@ class Wall:
             
         
 
-
-# In[ ]:
-
-
-
-        
-        
-
-
-# In[48]:
-
-
 def shift(walls, ts, lis, hs, shs, ds, ws): #shift object
     newwalls=[]
     for x in walls:
@@ -57,20 +40,12 @@ def shift(walls, ts, lis, hs, shs, ds, ws): #shift object
         
     return newwalls
 
-
-# In[49]:
-
-
 def mirror(walls): # left right swap object
         newwalls=[]
         for x in walls:
             newwall=Wall(x.t,(-x.li)+4-x.w,x.h,x.sh,x.d,x.w)
             newwalls.append(newwall)
         return newwalls  
-
-
-# In[50]:
-
 
 import json
 
@@ -102,10 +77,6 @@ def jsonparser():
     delvars()
     
 
-
-# In[51]:
-
-
 def nextw():
     global c
     if (c<len(walls)-1):
@@ -117,10 +88,6 @@ def backw():
     if (c>0):
         c=c-1
     delvars()
-
-
-# In[52]:
-
 
 def editw():
     global c
@@ -157,9 +124,59 @@ def delw():
         delvars()
         printw()
 
+import os
 
-# In[53]:
-
+def savew():
+    name=se.get()
+    data=''
+    newpath = r'Presets' 
+    if not os.path.exists(newpath):
+        os.makedirs(newpath)
+    for x in walls:
+        data=data+str(x)+','
+    if (not os.path.isfile("Presets/"+name+".txt")):
+        lb.insert(END, name)
+    with open("Presets/"+name+".txt", 'w') as file:
+        file.write(data)
+    
+def delsw():
+    name=lb.get(ACTIVE)
+    os.remove("Presets/"+name+".txt")
+    lb.delete(ANCHOR)
+    
+def loadpresets():
+    for x in os.listdir("Presets/"):
+        lb.insert(END,os.path.basename(x)[:-4])
+def loadw(a):
+    name=lb.get(ACTIVE)
+    with open("Presets/"+name+".txt", 'r') as file:
+        content=file.read()[:-1]
+    data=json.loads('['+content+']')
+    global walls
+    if(a==0):
+        walls=[]
+    global c
+    c=0
+    for x in data:
+        t=x['_time']
+        li=x['_lineIndex']
+        li=int((li-1000*pm(li))/1000)
+        ty=x['_type']
+        if (ty>=4001):
+            h=((ty // 1000)-4)/1000
+            sh=((ty % 10000)-4001)*4/3/1000
+        else:
+            h=(ty-1000)/1000
+            sh=0
+        d=x['_duration']
+        w=x['_width']
+        w=int((w-1000)/1000)
+        newwall= Wall(t,li,h,sh,d,w)
+        walls.append(newwall)
+        #out.insert(INSERT,x)
+        #out.insert(INSERT,',')
+    printw()
+    delvars()
 
 def mirrorw():
     global walls
@@ -195,15 +212,7 @@ def shiftwp():
         walls.append(x)
     printw()
 
-def sbsi(owall, ts, lis, hs, shs, ds, ws, times): #step-by-step-increase, owall is original wall/starting wall, s are shifts, times are how often
-    newwalls=[]
-    for x in range (times):
-        newwall= Wall(owall.t+ts, owall.li+lis, owall.h+hs, owall.sh+shs, owall.d+ds, owall.w+ws)
-        newwalls.append(newwall)
-        owall=newwall
-    return newwalls
-
-def sbsiw():
+def sbsiw(): #step-by-step-increase, owalls are original walls/starting walls, s are shifts, times are how often
     global walls
     owalls=walls
     ts=float(empty(v11.get()))
@@ -223,10 +232,6 @@ def sbsiw():
         owalls=newwalls
     printw()
     
-
-
-# In[54]:
-
 
 def clear():
     inp.delete("1.0",END)
@@ -275,10 +280,6 @@ def empty(a):
         return 0
     else:
         return a
-
-
-# In[62]:
-
 
 import tkinter as tk
 from tkinter import *
@@ -338,6 +339,25 @@ ol.grid(column=7,row=0)
 out= Text(window, width=20, height=30)
 out.grid(column=7, row=1, rowspan=14)
 #out['yscrollcommand'] = scroll2.set
+
+sl=Label(window, text="Name:")
+sl.grid(column=8,row=1)
+
+se=Entry(window,width=10)
+se.grid(column=9,row=1)
+
+btnsave=Button(window, text="Save Preset",width=15,command=savew)
+btnsave.grid(column=8,row=2,columnspan=2)
+
+lb=Listbox(window)
+lb.grid(column=8, row=3, columnspan=2, rowspan=3)
+
+btndele=Button(window,text="Delete Preset", command=delsw)
+btnloade=Button(window,text="Load Preset", command=lambda:loadw(0))
+btnloadep=Button(window,text="+Load Preset", command=lambda:loadw(1))
+btndele.grid(column=8, row=7)
+btnloade.grid(column=8,row=6)
+btnloadep.grid(column=9,row=6)
 
 h1=Label(window, text="Data", font="Verdana 10 bold underline")
 h1.grid(column=2, row=2, columnspan=2)
@@ -437,11 +457,9 @@ lv7.grid(column=4, row=9)
 credit=Label(window,text="Discord: ManDynasty#4729")
 credit.grid(column=5,row=14, columnspan=2)
 
+loadpresets()
 clear()
 window.mainloop()
-
-
-# In[ ]:
 
 
 
