@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[17]:
+
 
 def pm(a): #plusminus
     if (a<0):
@@ -26,6 +31,10 @@ class Wall:
             
         
 
+
+# In[18]:
+
+
 def shift(walls, ts, lis, hs, shs, ds, ws): #shift object
     newwalls=[]
     for x in walls:
@@ -40,12 +49,20 @@ def shift(walls, ts, lis, hs, shs, ds, ws): #shift object
         
     return newwalls
 
+
+# In[19]:
+
+
 def mirror(walls): # left right swap object
         newwalls=[]
         for x in walls:
             newwall=Wall(x.t,(-x.li)+4-x.w,x.h,x.sh,x.d,x.w)
             newwalls.append(newwall)
         return newwalls  
+
+
+# In[20]:
+
 
 import json
 
@@ -77,6 +94,10 @@ def jsonparser():
     delvars()
     
 
+
+# In[21]:
+
+
 def nextw():
     global c
     if (c<len(walls)-1):
@@ -88,6 +109,10 @@ def backw():
     if (c>0):
         c=c-1
     delvars()
+
+
+# In[22]:
+
 
 def editw():
     global c
@@ -124,20 +149,25 @@ def delw():
         delvars()
         printw()
 
+
+# In[23]:
+
+
 import os
 
 def savew():
-    name=se.get()
-    data=''
-    newpath = r'Presets' 
-    if not os.path.exists(newpath):
-        os.makedirs(newpath)
-    for x in walls:
-        data=data+str(x)+','
-    if (not os.path.isfile("Presets/"+name+".txt")):
-        lb.insert(END, name)
-    with open("Presets/"+name+".txt", 'w') as file:
-        file.write(data)
+    if (len(se.get())>0):
+        name=se.get()
+        data=''
+        newpath = r'Presets' 
+        if not os.path.exists(newpath):
+            os.makedirs(newpath)
+        for x in walls:
+            data=data+str(x)+','
+        if (not os.path.isfile("Presets/"+name+".txt")):
+            lb.insert(END, name)
+        with open("Presets/"+name+".txt", 'w') as file:
+            file.write(data)
     
 def delsw():
     name=lb.get(ACTIVE)
@@ -145,38 +175,49 @@ def delsw():
     lb.delete(ANCHOR)
     
 def loadpresets():
-    for x in os.listdir("Presets/"):
-        lb.insert(END,os.path.basename(x)[:-4])
+    try:
+        for x in os.listdir("Presets/"):
+            lb.insert(END,os.path.basename(x)[:-4])
+    except:
+        pass
 def loadw(a):
-    name=lb.get(ACTIVE)
-    with open("Presets/"+name+".txt", 'r') as file:
-        content=file.read()[:-1]
-    data=json.loads('['+content+']')
-    global walls
-    if(a==0):
-        walls=[]
-    global c
-    c=0
-    for x in data:
-        t=x['_time']
-        li=x['_lineIndex']
-        li=int((li-1000*pm(li))/1000)
-        ty=x['_type']
-        if (ty>=4001):
-            h=((ty // 1000)-4)/1000
-            sh=((ty % 10000)-4001)*4/3/1000
-        else:
-            h=(ty-1000)/1000
-            sh=0
-        d=x['_duration']
-        w=x['_width']
-        w=int((w-1000)/1000)
-        newwall= Wall(t,li,h,sh,d,w)
-        walls.append(newwall)
-        #out.insert(INSERT,x)
-        #out.insert(INSERT,',')
-    printw()
-    delvars()
+    try:
+        name=lb.get(ACTIVE)
+        with open("Presets/"+name+".txt", 'r') as file:
+            content=file.read()[:-1]
+        data=json.loads('['+content+']')
+        global walls
+        if(a==0):
+            walls=[]
+        global c
+        c=0
+        for x in data:
+            t=x['_time']
+            li=x['_lineIndex']
+            li=int((li-1000*pm(li))/1000)
+            ty=x['_type']
+            if (ty>=4001):
+                h=((ty // 1000)-4)/1000
+                sh=((ty % 10000)-4001)*4/3/1000
+            else:
+                h=(ty-1000)/1000
+                sh=0
+            d=x['_duration']
+            w=x['_width']
+            w=int((w-1000)/1000)
+            newwall= Wall(t,li,h,sh,d,w)
+            walls.append(newwall)
+            #out.insert(INSERT,x)
+            #out.insert(INSERT,',')
+        printw()
+        delvars()
+    
+    except:
+        pass
+
+
+# In[24]:
+
 
 def mirrorw():
     global walls
@@ -233,6 +274,10 @@ def sbsiw(): #step-by-step-increase, owalls are original walls/starting walls, s
     printw()
     
 
+
+# In[25]:
+
+
 def clear():
     inp.delete("1.0",END)
     out.delete("1.0",END)
@@ -281,6 +326,22 @@ def empty(a):
     else:
         return a
 
+
+# In[38]:
+
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
+# In[45]:
+
+
 import tkinter as tk
 from tkinter import *
 
@@ -289,8 +350,9 @@ global c
 
 window = Tk()
 window.title("Custom Wall Tool") 
+
 try:
-    window.iconbitmap('tama.ico')
+    window.iconbitmap(resource_path('tama.ico'))
 except:
     pass
     
@@ -460,6 +522,15 @@ credit.grid(column=5,row=14, columnspan=2)
 loadpresets()
 clear()
 window.mainloop()
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
 
 
 
