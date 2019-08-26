@@ -1,8 +1,8 @@
-Since im too unskilled its likely that the .exe doesnt work or only works when opened with cmd (when its not considered a virus lel). I recommend using jupyter or an other python editor.
+Since im kinda new to prgramming on this level, the .exe could maybe not work. In this case I recommend using jupyter or an other python editor.
 
 This tool lets you create and manipulate custom walls for Beat Saber.
 
-On the left textfield (Input) you can enter a json fragment containing existing walls, which can then be manipulated. After inserting json data press "Read Json". All results will be displayed on the right textfield (Output). "+"-Buttons always add the new walls on tp of the old ones, instead of replacing the old ones.
+On the left textfield (Input) you can enter a json fragment containing existing walls, which can then be manipulated. After inserting json data press "Read Json". All results will be displayed on the right textfield (Output). "+"-Buttons always add the new walls on top of the old ones, instead of replacing the old ones.
 
 The values below "Data" show the first/selected wall read from the json. Otherwise they can be used to create a new wall with "Add New Wall". New walls will be stacked up on old walls. "Delete Wall" will delete the currently selected (displayed in "Data") wall.
 
