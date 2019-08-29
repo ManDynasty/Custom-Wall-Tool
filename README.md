@@ -1,8 +1,8 @@
-Since im kinda new to prgramming on this level, the .exe could maybe not work. In this case I recommend using jupyter or an other python editor.
+Since im too unskilled its likely that the .exe doesnt work or only works when opened with cmd (when its not considered a virus lel). I recommend using jupyter or an other python editor.
 
 This tool lets you create and manipulate custom walls for Beat Saber.
 
-On the left textfield (Input) you can enter a json fragment containing existing walls, which can then be manipulated. After inserting json data press "Read Json". All results will be displayed on the right textfield (Output). "+"-Buttons always add the new walls on top of the old ones, instead of replacing the old ones.
+On the left textfield (Input) you can enter a json fragment containing existing walls, which can then be manipulated. After inserting json data press "Read Json". All results will be displayed on the right textfield (Output). "+"-Buttons always add the new walls on tp of the old ones, instead of replacing the old ones.
 
 The values below "Data" show the first/selected wall read from the json. Otherwise they can be used to create a new wall with "Add New Wall". New walls will be stacked up on old walls. "Delete Wall" will delete the currently selected (displayed in "Data") wall.
 
@@ -22,6 +22,8 @@ Enter a value for "Time" and press "Shift" to change all 5 walls by this value. 
 
 Number Logic:
 
-The original calculation by Kyle (https://github.com/Kylemc1413/MappingExtensions) is complicated. This tools makes it a lot easier: lineindex: 0 is leftmost, 4 is rightmost for 4 lanes play area height: 1 is a wall of full height, 0.5 a half wall, 0 is a flat wall start height: according to height, 1 starts on top of a wall with height 1. width: 1 is a wall of 1 row width, 0 is a thin wall
+The original calculation by Kyle (https://github.com/Kylemc1413/MappingExtensions) is complicated. This tools makes it a lot easier: lineindex: 0 is leftmost, 4 is rightmost for 4 lanes play area height: 1000 is a wall of full height, 0.5 a half wall, 0 is a flat wall start height: according to height, 750 starts on top of a wall with height 1000. width: 1000 is a wall of 1 row width, 0 is a thin wall
 
-0 height/width wall have "dark textures" to make the thinnest wall, that still looks like a wall use 0.001 This tool automatically includes shifts by 1000 and the skip from -1000 lineindex to 1000 to make it easy to work with.
+0 height/width wall have "dark textures" to make the thinnest wall, that still looks like a wall use 1 This tool automatically includes shifts by 1000 and the skip from -1000 lineindex to 1000 to make it easy to work with.
+
+Dont worry about weird adjustment based on the documentation by kyle. If you want a 750 height wall dont add 1000 but just type 750.

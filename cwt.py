@@ -1,38 +1,46 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[17]:
+# In[40]:
 
+
+from decimal import Decimal
 
 def pm(a): #plusminus
     if (a<0):
-        return -1
+        return -1000
     else:
-        return 1
+        return 1000
+    
+def dz(d): #duration zero ,rounds values if needed
+    if (d%1==0):
+        return round(d,0)
+    else:
+        return round(Decimal(d),3)
 
 class Wall:
     def __init__(self, t, li, h, sh, d, w):
-        self.t=t
-        self.li=li
-        self.h=h
-        self.sh=sh
-        self.d=d
-        self.w=w
+        self.t=Decimal(t)
+        self.li=int(li)
+        self.h=int(h)
+        self.sh=int(sh)
+        self.d=Decimal(d)
+        self.w=int(w)
         
     def __str__(self):
         
             return ('{\n'+  
              '"_time":'+str(self.t)+',\n'+
-             '"_lineIndex":'+str(int(self.li*1000+1000*pm(self.li)))+',\n'+
-             '"_type":'+str(int(self.h*1000000+self.sh*1000*3/4+4001))+',\n'+
-             '"_duration":'+str(self.d)+',\n'+
-             '"_width":'+str(int(self.w*1000+1000))+'\n'
+             '"_lineIndex":'+str(int(self.li+pm(self.li)))+',\n'+
+             '"_type":'+str(int(self.h*1000+self.sh+4001))+',\n'+
+             '"_duration":'+str(dz(self.d))+',\n'+
+             '"_width":'+str(int(self.w+1000))+'\n'
           '}')
             
         
 
 
-# In[18]:
+# In[41]:
 
 
 def shift(walls, ts, lis, hs, shs, ds, ws): #shift object
@@ -50,24 +58,29 @@ def shift(walls, ts, lis, hs, shs, ds, ws): #shift object
     return newwalls
 
 
-# In[19]:
+# In[42]:
 
 
 def mirror(walls): # left right swap object
         newwalls=[]
         for x in walls:
-            newwall=Wall(x.t,(-x.li)+4-x.w,x.h,x.sh,x.d,x.w)
+            newwall=Wall(x.t,(-x.li)+4000-x.w,x.h,x.sh,x.d,x.w)
             newwalls.append(newwall)
         return newwalls  
 
 
-# In[20]:
+# In[43]:
 
 
 import json
 
 def jsonparser():
-    data=json.loads('['+inp.get("1.0", END)+']')
+    dataraw=inp.get("1.0", END)
+    if (dataraw[-2]==","):
+        dataraw=dataraw[:-2]
+    if(dataraw[0]==","):
+        dataraw=dataraw[1:]   
+    data=json.loads('['+dataraw+']')
     global walls
     walls=[]
     global c
@@ -75,17 +88,28 @@ def jsonparser():
     for x in data:
         t=x['_time']
         li=x['_lineIndex']
-        li=int((li-1000*pm(li))/1000)
+        if (li>=0) and (li<=3):
+            li=li*1000+1000
+        li=int(li-pm(li))
         ty=x['_type']
         if (ty>=4001):
-            h=((ty // 1000)-4)/1000
-            sh=((ty % 10000)-4001)*4/3/1000
-        else:
-            h=(ty-1000)/1000
+            sh=((ty%10000)-4001)%1000
+            h=(ty-4001-sh)//1000
+        elif(ty>=1000):
+            h=(ty-1000)
             sh=0
+        elif(ty==1):
+            h=1000
+            sh=0
+        elif(ty==0.5):
+            h=500
+            sh=394
+            
         d=x['_duration']
         w=x['_width']
-        w=int((w-1000)/1000)
+        if(w>=0) and (w<=4):
+            w=w*1000+1000
+        w=int(w-1000)
         newwall= Wall(t,li,h,sh,d,w)
         walls.append(newwall)
         #out.insert(INSERT,x)
@@ -95,7 +119,7 @@ def jsonparser():
     
 
 
-# In[21]:
+# In[44]:
 
 
 def nextw():
@@ -111,26 +135,26 @@ def backw():
     delvars()
 
 
-# In[22]:
+# In[45]:
 
 
 def editw():
     global c
-    walls[c].t=float(v1.get())
-    walls[c].li=float(v2.get())
-    walls[c].h=float(v3.get())
-    walls[c].sh=float(v4.get())
-    walls[c].d=float(v5.get())
-    walls[c].w=float(v6.get())
+    walls[c].t=Decimal(v1.get())
+    walls[c].li=int(v2.get())
+    walls[c].h=int(v3.get())
+    walls[c].sh=int(v4.get())
+    walls[c].d=Decimal(v5.get())
+    walls[c].w=int(v6.get())
     printw()
 
 def addw():
-    t=float(empty(v1.get()))
-    li=float(empty(v2.get()))
-    h=float(empty(v3.get()))
-    sh=float(empty(v4.get()))
-    d=float(empty(v5.get()))
-    w=float(empty(v6.get()))
+    t=Decimal(empty(v1.get()))
+    li=int(empty(v2.get()))
+    h=int(empty(v3.get()))
+    sh=int(empty(v4.get()))
+    d=Decimal(empty(v5.get()))
+    w=int(empty(v6.get()))
     newwall=Wall(t,li,h,sh,d,w)
     walls.append(newwall)
     global c
@@ -150,7 +174,7 @@ def delw():
         printw()
 
 
-# In[23]:
+# In[46]:
 
 
 import os
@@ -194,17 +218,17 @@ def loadw(a):
         for x in data:
             t=x['_time']
             li=x['_lineIndex']
-            li=int((li-1000*pm(li))/1000)
+            li=int(li-pm(li))
             ty=x['_type']
             if (ty>=4001):
-                h=((ty // 1000)-4)/1000
-                sh=((ty % 10000)-4001)*4/3/1000
+                h=((ty // 1000)-4)
+                sh=((ty-(h*1000))-4001)
             else:
-                h=(ty-1000)/1000
+                h=(ty-1000)
                 sh=0
             d=x['_duration']
             w=x['_width']
-            w=int((w-1000)/1000)
+            w=int(w-1000)
             newwall= Wall(t,li,h,sh,d,w)
             walls.append(newwall)
             #out.insert(INSERT,x)
@@ -216,7 +240,7 @@ def loadw(a):
         pass
 
 
-# In[24]:
+# In[47]:
 
 
 def mirrorw():
@@ -226,12 +250,12 @@ def mirrorw():
     
 def shiftw():
     global walls
-    ts=float(empty(v11.get()))
-    lis=float(empty(v22.get()))
-    hs=float(empty(v33.get()))
-    shs=float(empty(v44.get()))
-    ds=float(empty(v55.get()))
-    ws=float(empty(v66.get()))
+    ts=Decimal(empty(v11.get()))
+    lis=int(empty(v22.get()))
+    hs=int(empty(v33.get()))
+    shs=int(empty(v44.get()))
+    ds=Decimal(empty(v55.get()))
+    ws=int(empty(v66.get()))
     walls=shift(walls, ts, lis, hs, shs, ds, ws)
     printw()
     
@@ -243,12 +267,12 @@ def mirrorwp():
     
 def shiftwp():
     global walls
-    ts=float(empty(v11.get()))
-    lis=float(empty(v22.get()))
-    hs=float(empty(v33.get()))
-    shs=float(empty(v44.get()))
-    ds=float(empty(v55.get()))
-    ws=float(empty(v66.get()))
+    ts=Decimal(empty(v11.get()))
+    lis=int(empty(v22.get()))
+    hs=int(empty(v33.get()))
+    shs=int(empty(v44.get()))
+    ds=Decimal(empty(v55.get()))
+    ws=int(empty(v66.get()))
     for x in shift(walls, ts, lis, hs, shs, ds, ws):
         walls.append(x)
     printw()
@@ -256,12 +280,12 @@ def shiftwp():
 def sbsiw(): #step-by-step-increase, owalls are original walls/starting walls, s are shifts, times are how often
     global walls
     owalls=walls
-    ts=float(empty(v11.get()))
-    lis=float(empty(v22.get()))
-    hs=float(empty(v33.get()))
-    shs=float(empty(v44.get()))
-    ds=float(empty(v55.get()))
-    ws=float(empty(v66.get()))
+    ts=Decimal(empty(v11.get()))
+    lis=int(empty(v22.get()))
+    hs=int(empty(v33.get()))
+    shs=int(empty(v44.get()))
+    ds=Decimal(empty(v55.get()))
+    ws=int(empty(v66.get()))
     times=int(empty(v77.get()))
     a=len(walls)
     for x in range (times):
@@ -275,7 +299,7 @@ def sbsiw(): #step-by-step-increase, owalls are original walls/starting walls, s
     
 
 
-# In[25]:
+# In[48]:
 
 
 def clear():
@@ -300,9 +324,10 @@ def clear():
 def printw():
     global walls
     out.delete("1.0",END)
+    output=""
     for x in walls:
-        out.insert(INSERT,x)
-        out.insert(INSERT,",")
+        output+=str(x)+","
+    out.insert(INSERT,output[:-1])
         
 def delvars():
     global c
@@ -317,7 +342,7 @@ def delvars():
         v2.insert(INSERT,walls[c].li)
         v3.insert(INSERT,walls[c].h)
         v4.insert(INSERT,walls[c].sh)
-        v5.insert(INSERT,walls[c].d)
+        v5.insert(INSERT,dz(walls[c].d))
         v6.insert(INSERT,walls[c].w)
     
 def empty(a):
@@ -327,7 +352,7 @@ def empty(a):
         return a
 
 
-# In[38]:
+# In[49]:
 
 
 def resource_path(relative_path):
@@ -339,10 +364,25 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
-# In[45]:
+# In[50]:
 
 
-import tkinter as tk
+import math
+
+def circle(swall, r): #startwall radius
+    global walls
+    rs=r*r*1000
+    r=r*1000
+    
+    for a in range (r): #left side
+        x=-r+a #konvertierung auf normale walls
+        y=(1/3)*round(math.sqrt(rs-(x*x)),3)
+        walls.append(Wall(swall.t,x,swall.h,x,swall.d,swall.w))
+
+
+# In[51]:
+
+
 from tkinter import *
 
 global walls
@@ -350,6 +390,10 @@ global c
 
 window = Tk()
 window.title("Custom Wall Tool") 
+
+
+# In[ ]:
+
 
 try:
     window.iconbitmap(resource_path('tama.ico'))
@@ -501,16 +545,16 @@ lv1.grid(column=4, row=3)
 lv2=Label(window, text="any", font="bold",fg="green")
 lv2.grid(column=4, row=4)
 
-lv3=Label(window, text="0-4", font="bold",fg="green")
+lv3=Label(window, text="0-4000", font="bold",fg="green")
 lv3.grid(column=4, row=5)
 
-lv4=Label(window, text="0-1.33", font="bold",fg="green")
+lv4=Label(window, text="0-999", font="bold",fg="green")
 lv4.grid(column=4, row=6)
 
 lv5=Label(window, text="any", font="bold",fg="green")
 lv5.grid(column=4, row=7)
 
-lv6=Label(window, text=">0", font="bold",fg="green")
+lv6=Label(window, text="any", font="bold",fg="green")
 lv6.grid(column=4, row=8)
 
 lv7=Label(window, text="int >0", font="bold",fg="green")
@@ -521,6 +565,22 @@ credit.grid(column=5,row=14, columnspan=2)
 
 loadpresets()
 clear()
+
+def select_all_out(event):
+    out.tag_add(SEL, "1.0", END)
+    out.mark_set(INSERT, "1.0")
+    out.see(INSERT)
+    return 'break'
+
+def select_all_inp(event):
+    inp.tag_add(SEL, "1.0", END)
+    inp.mark_set(INSERT, "1.0")
+    inp.see(INSERT)
+    return 'break'
+
+out.bind("<Control-Key-a>", select_all_out)
+inp.bind("<Control-Key-a>", select_all_inp)
+
 window.mainloop()
 
 
